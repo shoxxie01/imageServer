@@ -37,7 +37,7 @@ public class Creator {
         File dbFile = new File(filepath);
         if (dbFile.exists()) {
             if (!dbFile.delete()){
-                System.out.println("Error during delete database");
+                System.out.println("Error during delete databases");
             }
         }else{
             System.out.println("Error database dosent exist");
