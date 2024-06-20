@@ -2,12 +2,8 @@ package client;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 public class Client{
 
@@ -32,7 +28,7 @@ public class Client{
                 bufferedWriter.write(line);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
-                TimeUnit.SECONDS.sleep(2);
+                Thread.sleep(2000);
             }
             bufferedWriter.write("BYE");
             bufferedWriter.newLine();
