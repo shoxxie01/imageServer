@@ -1,35 +1,57 @@
 package server;
 
+import client.Client;
+import client.ClientHandler;
+
 import javax.imageio.spi.IIOServiceProvider;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Server {
 
     private ServerSocket serverSocket;
-    private BufferedWriter bufferedWriter;
-    private BufferedReader bufferedReader;
-    private Socket socket;
 
     public Server(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
+    }
 
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+    public void start(){
+
+        try{
+
+            while(!serverSocket.isClosed()){
+
+                Socket socket = serverSocket.accept();
+                System.out.println("A new client has connected!");
+
+                ClientHandler clientHandler = new ClientHandler(socket);
+
+                Thread thread = new Thread(clientHandler);
+                thread.start();
+
+            }
         }catch (IOException e){
             e.printStackTrace();
         }
     }
 
-    public void start(){
-        while(true) {
-            try {
-                socket = serverSocket.accept();
-            }catch (IOException e){
-                e.printStackTrace();
+    public void close(){
+
+        try{
+            if(serverSocket != null){
+                serverSocket.close();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(1234);
+        Server server = new Server(serverSocket);
+        server.start();
     }
 }

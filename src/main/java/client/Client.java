@@ -1,53 +1,62 @@
 package client;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-public class Client {
+public class Client{
 
     private Socket socket;
-    private BufferedWriter bufferedWriter;
-    private String username;
-    private List<String> dataLines;
 
     public Client(Socket socket) {
         this.socket = socket;
-        Path url;
+    }
+
+    public void sendData(String name, String filepath){
+
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(filepath));
+
+            bufferedWriter.write(name);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null){
+                bufferedWriter.write(line);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+                TimeUnit.SECONDS.sleep(2);
+            }
+            bufferedWriter.write("BYE");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
+        }catch (IOException | InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void main(String[] args) throws IOException {
+
+        Socket socket = new Socket("localhost", 1234);
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your username: ");
-        this.username = scanner.nextLine();
-        System.out.println("Enter url address: ");
-        url = Path.of(scanner.nextLine());
+        String username = scanner.nextLine();
 
-        try {
-            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        System.out.println("Enter file address: ");
+        String path = scanner.nextLine();
 
-            bufferedWriter.write(username);
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    private void dataToString(Path path){
-        try (Stream<String> fileLines = Files.lines(path)){
-            dataLines = fileLines.toList();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
-        Socket socket = new Socket("localhost", 1234);
         Client client = new Client(socket);
+        client.sendData(username, path);
+        
     }
 }

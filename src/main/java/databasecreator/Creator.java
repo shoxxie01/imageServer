@@ -10,7 +10,7 @@ import java.sql.Statement;
 public class Creator {
 
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:C:\\Users\\luke\\Documents\\usereeg.db";
+        String url = "jdbc:sqlite:C:\\Users\\User\\Desktop\\programowanie\\Java_projects\\imageServer\\usereeg.db";
         Creator creator = new Creator();
         creator.create(url);
 
@@ -37,10 +37,10 @@ public class Creator {
         File dbFile = new File(filepath);
         if (dbFile.exists()) {
             if (!dbFile.delete()){
-                System.out.println("Error during delete databases");
+                System.out.println("Error during delete database");
             }
         }else{
-            System.out.println("Error database dosent exist");
+            System.out.println("Error database doesnt exist");
         }
     }
 }
